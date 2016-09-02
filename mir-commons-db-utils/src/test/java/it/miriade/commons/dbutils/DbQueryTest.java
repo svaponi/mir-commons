@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import it.miriade.commons.dbutils.entities.Test01;
+import it.miriade.commons.logging.LogbackInitializer;
 import it.miriade.commons.utils.DateHandler;
 import it.miriade.commons.utils.DateHandler.Format;
 import it.miriade.commons.utils.StringHandler;
@@ -35,22 +36,28 @@ import it.miriade.commons.utils.StringHandler;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DbQueryTest {
 
+	static {
+		new LogbackInitializer(Constants.LOG_CONFIG_FILE).init();
+	}
+
 	static final Logger _log = LoggerFactory.getLogger(DbQueryTest.class);
 	static final double _delta = 0.01;
 	static final boolean _dropAllAtTheEnd = false;
 
-	static final int NUM_OF_COLUMNS = 5;
-	static final Date C0 = new Date();
-	static final String C1 = "foo";
-	static final int C2 = 1;
-	static final long C3 = Long.MAX_VALUE;
-	static final double C4 = 0.23;
-	static final int BATCH_LENGTH = 5;
+	final int NUM_OF_COLUMNS = 5;
+	final Date C0 = new Date();
+	final String C1 = "foo";
+	final int C2 = 1;
+	final long C3 = Long.MAX_VALUE;
+	final double C4 = 0.23;
+	final int BATCH_LENGTH = 5;
+
+	static DbQuery _dbq;
+
+	Logger log = LoggerFactory.getLogger(DbQueryTest.class);
 
 	@Autowired
 	DbQuery dbq;
-
-	static DbQuery _dbq;
 
 	@PostConstruct
 	public void init() {
@@ -59,7 +66,7 @@ public class DbQueryTest {
 
 	@Test
 	public void test00_prerequisiti() {
-		_log.debug("@test00_prerequisiti");
+		log.debug("@test00_prerequisiti");
 
 		// Test object not null
 		Assert.assertNotNull("DbQuery should be not null", dbq);
@@ -71,7 +78,7 @@ public class DbQueryTest {
 
 	@Test
 	public void test01_createTable() {
-		_log.debug("test01_createTable()");
+		log.debug("test01_createTable()");
 		dbq.update("CREATE TABLE test01 (C0 timestamp, C1 varchar, C2 integer, C3 bigint, C4 double precision)");
 
 		try {
@@ -87,7 +94,7 @@ public class DbQueryTest {
 
 	@Test
 	public void test02_querySelect() {
-		_log.debug("test02_queryTest()");
+		log.debug("test02_queryTest()");
 		DbResult result = dbq.select("SELECT C0, C1, C2, C3, C4 FROM test01");
 
 		// Test result is not null
@@ -115,7 +122,7 @@ public class DbQueryTest {
 
 	@Test
 	public void test03_queryDelete() {
-		_log.debug("test03_queryDelete()");
+		log.debug("test03_queryDelete()");
 		int n = dbq.update("DELETE FROM test01");
 
 		// Test number of deleted rows
@@ -124,14 +131,14 @@ public class DbQueryTest {
 
 	@Test
 	public void test04_queryInsert() {
-		_log.debug("test04_queryInsert()");
+		log.debug("test04_queryInsert()");
 		dbq.update("INSERT INTO test01 (C0, C1, C2, C3, C4) VALUES (?, ?, ?, ?, ?), (?, ?, ?, ?, ?)", C0, C1, C2, C3, C4, DateHandler.addDays(C0, 1), C1 + "1",
 				C2 + 1, C3 - 1, C4 + 1);
 	}
 
 	@Test
 	public void test04_queryTest() {
-		_log.debug("test04_queryTest()");
+		log.debug("test04_queryTest()");
 		// ordino in modo che la prima riga sia la prima inserita
 		DbResult result = dbq.select("SELECT * FROM test01 ORDER BY C0");
 
@@ -161,7 +168,7 @@ public class DbQueryTest {
 
 	@Test
 	public void test05_createBatch() {
-		_log.debug("test05_createBatch()");
+		log.debug("test05_createBatch()");
 		List<String> queries = new ArrayList<String>();
 
 		queries.add("CREATE TABLE test05 (C0 timestamp, C1 varchar, C2 integer, C3 bigint, C4 double precision)");
@@ -195,10 +202,10 @@ public class DbQueryTest {
 
 	@Test
 	public void test06_getEntityList() {
-		_log.debug("test06_getEntityList()");
+		log.debug("test06_getEntityList()");
 		List<Test01> entities = dbq.getEntityList("SELECT * FROM test01 ORDER BY C0", Test01.class);
 
-		_log.debug("List: [{}]", StringHandler.join(",", entities.toArray()));
+		log.debug("List: [{}]", StringHandler.join(",", entities.toArray()));
 
 		// Test number of rows
 		Assert.assertEquals("EntityList should have 2 items", 2, entities.size());

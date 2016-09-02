@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">     
+<hibernate-mapping>
+
+    <sql-query name="MyNamedQuery">
+        <![CDATA[
+select A, B, C from (
+	select 1 as A, cast('2' as varchar) as B, 3.0 as C
+	union
+	select 11, '12', 13.0 
+	union
+	select 101, '102', 103.0 
+	union
+	select 1001, '1002', 1003.0 
+	union
+	select 10001, '10002', 10003.0 
+) sub
+where A < :p1 and B like :p2
+order by A
+		]]>
+    </sql-query>	
+
+</hibernate-mapping>

@@ -47,19 +47,6 @@
 	<!-- DATASOURCE definitions -->
 	<!-- ================================================================================================ -->
 
-	<!-- DATA SOURCE and Database configuration -->
-
-<!-- 	<bean id="cpDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"> -->
-<!-- 		<property name="driverClass" value="${jdbc.driver.class}" /> -->
-<!-- 		<property name="jdbcUrl" value="${jdbc.url}" /> -->
-<!-- 		<property name="user" value="${jdbc.user}" /> -->
-<!-- 		<property name="password" value="${jdbc.password}" /> -->
-<!-- 		<property name="minPoolSize" value="5" /> -->
-<!-- 		<property name="maxPoolSize" value="25" /> -->
-<!-- 		<property name="testConnectionOnCheckin" value="true" /> -->
-<!-- 		<property name="idleConnectionTestPeriod" value="300" /> -->
-<!-- 	</bean> -->
-
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${jdbc.driver.class}" />

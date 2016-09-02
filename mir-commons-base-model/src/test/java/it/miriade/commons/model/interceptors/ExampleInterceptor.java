@@ -35,94 +35,94 @@ public class ExampleInterceptor extends EmptyInterceptor {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		log.debug("onLoad({}, {}, {}, {}, {})", entity, id, Arrays.deepToString(state), Arrays.deepToString(propertyNames), Arrays.deepToString(types));
+		log.trace("onLoad({}, {}, {}, {}, {})", entity, id, Arrays.deepToString(state), Arrays.deepToString(propertyNames), Arrays.deepToString(types));
 		return super.onLoad(entity, id, state, propertyNames, types);
 	}
 
 	@Override
 	public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		log.debug("onDelete({}, {}, {}, {}, {})", entity, id, Arrays.deepToString(state), Arrays.deepToString(propertyNames), Arrays.deepToString(types));
+		log.trace("onDelete({}, {}, {}, {}, {})", entity, id, Arrays.deepToString(state), Arrays.deepToString(propertyNames), Arrays.deepToString(types));
 		super.onDelete(entity, id, state, propertyNames, types);
 	}
 
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-		log.debug("onFlushDirty({}, {}, {}, {}, {}, {})", entity, id, Arrays.deepToString(currentState), Arrays.deepToString(previousState),
+		log.trace("onFlushDirty({}, {}, {}, {}, {}, {})", entity, id, Arrays.deepToString(currentState), Arrays.deepToString(previousState),
 				Arrays.deepToString(propertyNames), Arrays.deepToString(types));
 		return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
 	}
 
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		log.debug("onSave({}, {}, {}, {}, {})", entity, id, Arrays.deepToString(state), Arrays.deepToString(propertyNames), Arrays.deepToString(types));
+		log.trace("onSave({}, {}, {}, {}, {})", entity, id, Arrays.deepToString(state), Arrays.deepToString(propertyNames), Arrays.deepToString(types));
 		return super.onSave(entity, id, state, propertyNames, types);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void postFlush(Iterator entities) {
-		log.debug("postFlush({}, {}, [..])", entities.hasNext() ? entities.next() : "", entities.hasNext() ? entities.next() : "");
+		log.trace("postFlush({}, {}, [..])", entities.hasNext() ? entities.next() : "", entities.hasNext() ? entities.next() : "");
 		super.postFlush(entities);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void preFlush(Iterator entities) {
-		log.debug("preFlush({}, {}, [..])", entities.hasNext() ? entities.next() : "", entities.hasNext() ? entities.next() : "");
+		log.trace("preFlush({}, {}, [..])", entities.hasNext() ? entities.next() : "", entities.hasNext() ? entities.next() : "");
 		super.preFlush(entities);
 	}
 
 	@Override
 	public Boolean isTransient(Object entity) {
-		log.debug("isTransient({})", entity);
+		log.trace("isTransient({})", entity);
 		return super.isTransient(entity);
 	}
 
 	@Override
 	public Object instantiate(String entityName, EntityMode entityMode, Serializable id) {
-		log.debug("instantiate({}, {}, {})", entityName, entityMode, id);
+		log.trace("instantiate({}, {}, {})", entityName, entityMode, id);
 		return super.instantiate(entityName, entityMode, id);
 	}
 
 	@Override
 	public void afterTransactionBegin(Transaction tx) {
-		log.debug("afterTransactionBegin({})", "<tx>");
+		log.trace("afterTransactionBegin({})", "<tx>");
 		super.afterTransactionBegin(tx);
 	}
 
 	@Override
 	public void afterTransactionCompletion(Transaction tx) {
-		log.debug("afterTransactionCompletion({})", "<tx>");
+		log.trace("afterTransactionCompletion({})", "<tx>");
 		super.afterTransactionCompletion(tx);
 	}
 
 	@Override
 	public void beforeTransactionCompletion(Transaction tx) {
-		log.debug("beforeTransactionCompletion({})", "<tx>");
+		log.trace("beforeTransactionCompletion({})", "<tx>");
 		super.beforeTransactionCompletion(tx);
 	}
 
 	@Override
 	public String onPrepareStatement(String sql) {
-		log.debug("onPrepareStatement({})", sql);
+		log.trace("onPrepareStatement({})", sql);
 		return super.onPrepareStatement(sql);
 	}
 
 	@Override
 	public void onCollectionRemove(Object collection, Serializable key) throws CallbackException {
-		log.debug("onCollectionRemove({}, {})", collection, key);
+		log.trace("onCollectionRemove({}, {})", collection, key);
 		super.onCollectionRemove(collection, key);
 	}
 
 	@Override
 	public void onCollectionRecreate(Object collection, Serializable key) throws CallbackException {
-		log.debug("onCollectionRecreate({}, {})", collection, key);
+		log.trace("onCollectionRecreate({}, {})", collection, key);
 		super.onCollectionRecreate(collection, key);
 	}
 
 	@Override
 	public void onCollectionUpdate(Object collection, Serializable key) throws CallbackException {
-		log.debug("onCollectionUpdate({}, {})", collection, key);
+		log.trace("onCollectionUpdate({}, {})", collection, key);
 		super.onCollectionUpdate(collection, key);
 	}
 

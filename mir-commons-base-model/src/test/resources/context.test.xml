@@ -79,7 +79,7 @@
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="mappingResources">
 			<list>
-				<!-- qui vanno i file xml contenenti le named queries -->
+				<value>queries.hbm.xml</value>
 			</list>
 		</property>
 		<property name="dataSource" ref="cpDataSource"></property>

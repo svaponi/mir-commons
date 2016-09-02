@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import it.miriade.commons.logging.LogbackInitializer;
 import it.miriade.commons.model.dao.GenericDao;
 import it.miriade.commons.model.test.entities.Foo;
 
@@ -19,6 +20,10 @@ import it.miriade.commons.model.test.entities.Foo;
 @ContextConfiguration(Constants.CONTEXT_XML_FILE)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GenericDaoImplTests {
+
+	static {
+		new LogbackInitializer(Constants.LOG_CONFIG_FILE).init();
+	}
 
 	final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -28,7 +33,7 @@ public class GenericDaoImplTests {
 
 	@Test
 	public void test00_nullObjects() {
-		Assert.assertNotNull("GenericDao<Foo, String> must be not null", fooDao);
+		Assert.assertNotNull("GenericDao<Foo, String> is null", fooDao);
 	}
 
 	@Test

@@ -17,6 +17,8 @@ import it.miriade.commons.utils.StringHandler;
 @Table(name = Constants.FOO_TABLE, schema = Constants.DB_SCHEMA)
 public class Foo implements ModelEntity<String> {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@Column(name = "name", updatable = false)
 	protected String name;
