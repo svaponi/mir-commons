@@ -1,0 +1,17 @@
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/DaoImpl.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/ModelEntityImpl.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/utils/StringToInt4Converter.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/utils/StringIdGenerator.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/utils/AttributeConverterUtils.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/ModelEntity.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/GenericDao.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/Model.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/Dao.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/comparators/UidComparator.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/CriteriaFactory.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/PrintUtil.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/GenericDaoImpl.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/comparators/StringFieldComparator.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/entities/comparators/NumericFieldComparator.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/ModelHandler.java
+/mnt/workbench/workspaces/ws-mir-commons/backend/mir-commons/mir-commons-base-model/src/main/java/it/miriade/commons/model/utils/DbUtil.java
