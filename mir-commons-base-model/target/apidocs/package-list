@@ -1,0 +1,6 @@
+it.miriade.commons.model
+it.miriade.commons.model.dao
+it.miriade.commons.model.entities
+it.miriade.commons.model.entities.comparators
+it.miriade.commons.model.entities.utils
+it.miriade.commons.model.utils

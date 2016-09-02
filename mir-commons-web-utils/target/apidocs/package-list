@@ -1,0 +1,8 @@
+it.miriade.commons.web
+it.miriade.commons.web.configuration
+it.miriade.commons.web.controllers
+it.miriade.commons.web.filters
+it.miriade.commons.web.resources
+it.miriade.commons.web.resources.ui
+it.miriade.commons.web.resources.utils
+it.miriade.commons.web.services

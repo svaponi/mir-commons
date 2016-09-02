@@ -1,0 +1,74 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+	<!-- ================================================================================================ -->
+	<!-- SPRING ANNOTATION PROCESSING -->
+	<!-- ================================================================================================ -->
+
+	<context:annotation-config />
+	<context:component-scan base-package="it.miriade.commons" />
+
+
+	<!-- ================================================================================================ -->
+	<!-- PropertyPlaceholder -->
+	<!-- ================================================================================================ -->
+
+	<!-- All properties used within this configuration file are stored in the 
+		following PropertyPlaceholder -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:application.test.properties" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
+		<property name="searchSystemEnvironment" value="true" />
+		<property name="order" value="1" />
+	</bean>
+
+	<!-- systemPropertiesModeName: -->
+	<!-- SYSTEM_PROPERTIES_MODE_FALLBACK: By default if a placeholder could 
+		not be resolved by the specified properties files, Spring will try to resolve 
+		it with a system property. -->
+	<!-- SYSTEM_PROPERTIES_MODE_OVERRIDE: In this mode, Spring will resolve 
+		the placeholders to system properties first. If a system property does exist, 
+		its value will override the value in the properties file. -->
+	<!-- SYSTEM_PROPERTIES_MODE_NEVER: Spring will not take system properties 
+		into consideration when resolving the placeholders. -->
+
+
+	<!-- ================================================================================================ -->
+	<!-- DATASOURCE definitions -->
+	<!-- ================================================================================================ -->
+
+	<!-- DATA SOURCE and Database configuration -->
+
+<!-- 	<bean id="cpDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"> -->
+<!-- 		<property name="driverClass" value="${jdbc.driver.class}" /> -->
+<!-- 		<property name="jdbcUrl" value="${jdbc.url}" /> -->
+<!-- 		<property name="user" value="${jdbc.user}" /> -->
+<!-- 		<property name="password" value="${jdbc.password}" /> -->
+<!-- 		<property name="minPoolSize" value="5" /> -->
+<!-- 		<property name="maxPoolSize" value="25" /> -->
+<!-- 		<property name="testConnectionOnCheckin" value="true" /> -->
+<!-- 		<property name="idleConnectionTestPeriod" value="300" /> -->
+<!-- 	</bean> -->
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driver.class}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+</beans>
+
+
+

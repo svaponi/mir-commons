@@ -1,0 +1,4 @@
+it/miriade/commons/model/test/entities/Foo.class
+it/miriade/commons/model/test/GenericDaoImplTests.class
+it/miriade/commons/model/interceptors/ExampleInterceptor.class
+it/miriade/commons/model/test/DaoImplTests.class
