@@ -108,6 +108,10 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<reportOutputDirectory>../docs</reportOutputDirectory>
+					<destDir>${project.artifactId}</destDir>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

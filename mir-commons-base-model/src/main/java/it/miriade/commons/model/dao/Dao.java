@@ -8,8 +8,9 @@ import org.hibernate.Session;
 import it.miriade.commons.model.entities.ModelEntity;
 
 /**
- * Questa classe fornisce metodi di accesso al dato senza essere vincolata ad una particolare entity, ovvero può essere
- * usata per tuttè le entities che estendono {@link ModelEntity}
+ * Questa classe fornisce metodi di accesso al dato senza essere vincolata ad una particolare entity e/o tabella, ovvero
+ * può essere usata per tutte le entities che estendono {@link ModelEntity}, come anche per eseguire SQL o named-query o
+ * azioni indipendenti dagli oggetti come <code>select NEXTVAL from sequence</code>.
  * 
  * @author svaponi
  * @created Feb 5, 2016 9:39:13 AM

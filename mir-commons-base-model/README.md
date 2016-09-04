@@ -1,25 +1,30 @@
-# mir-commons-base-model
-This module provide a DAO layer implementation right out-of-the-box, using Java Generics.
-##### How to
-Once you have your Java entity written using JPA annotations, like [`Foo`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/test/java/it/miriade/commons/model/test/entities/Foo.java), make it implement `ModelEntity<PK>` interface (with PK the class of your @Id, also a composite one). Then you can access all DAO features with 3 simple moves.
-* Injecting a [`GenericDao`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/GenericDao.java) object in our service.
+# mir-commons-base-model <sup><sub>[[Javadoc](https://svaponi.github.io/mir-commons/mir-commons-base-model)]</sub></sup>
 
-```Java
+This module provide a DAO layer implementation right out-of-the-box, using Java Generics.
+
+## How to
+
+Once you have your Java entity written using JPA annotations, like [`Foo`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/test/java/it/miriade/commons/model/test/entities/Foo.java), make it implement `ModelEntity<PK>` interface (with PK the class of your @Id, also a composite one). Then you can access all DAO features with 3 simple moves.
+
+- Injecting a [`GenericDao`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/GenericDao.java) object in our service.
+
+```java
 @Autowired
 @Qualifier("FooDao")
 GenericDao<Foo, String> fooDao;
 ```
 
-* Add `FooDao` declaration in your `context.xml`.
+- Add `FooDao` declaration in your `context.xml`.
 
-```Xml
+```xml
 <bean id="FooDao" class="it.miriade.commons.model.dao.GenericDaoImpl">
   <constructor-arg value="it.miriade.commons.model.test.entities.Foo" />
 </bean>
 ```
-* Be sure to have a proper Hibernate config, and add an `HibernateTemplate`.
 
-```Xml
+- Be sure to have a proper Hibernate config, and add an `HibernateTemplate`.
+
+```xml
 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 <property name="driverClass" value="YOUR_DRIVER" />
 <property name="jdbcUrl" value="YOUR_URL" />
@@ -58,20 +63,21 @@ GenericDao<Foo, String> fooDao;
 <bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
   <property name="sessionFactory" ref="sessionFactory" />
 </bean>
-
 ```
 
-Or, alternativelly, if you do not have any entities but you just need to access DB somehow, for example exec a named-query, just use a  [`Dao`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/Dao.java) object.
+Or, alternativelly, if you do not have any entities but you just need to access DB somehow, for example exec a named-query, just use a [`Dao`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/main/java/it/miriade/commons/model/dao/Dao.java) object.
 
-```Java
+```java
 @Autowired
 Dao dao;
 ```
 
 With relative config in `context.xml`.
 
-```Xml
+```xml
 <bean id="Dao" class="it.miriade.commons.model.dao.DaoImpl" />
 ```
-##### See in action
-Se both alternatives in action in these JUnit classes:  [`GenericDaoImplTests`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/test/java/it/miriade/commons/model/test/GenericDaoImplTests.java) and [`DaoImplTests`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/test/java/it/miriade/commons/model/test/DaoImplTests.java).
+
+## See in action
+
+Se both alternatives in action in these JUnit classes: [`GenericDaoImplTests`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/test/java/it/miriade/commons/model/test/GenericDaoImplTests.java) and [`DaoImplTests`](https://github.com/svaponi/mir-commons/blob/master/mir-commons-base-model/src/test/java/it/miriade/commons/model/test/DaoImplTests.java).

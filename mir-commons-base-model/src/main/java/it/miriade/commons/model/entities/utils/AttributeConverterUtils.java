@@ -1,12 +1,11 @@
 package it.miriade.commons.model.entities.utils;
 
-
 /**
+ * Utility con metodi statici per convertire oggetti.
+ * 
  * @author svaponi
- * @created
  */
 public class AttributeConverterUtils {
-
 
 	public static Integer castToInteger(final String uid) {
 		try {

@@ -1,5 +1,8 @@
 package it.miriade.commons.model;
 
+/**
+ * @author svaponi
+ */
 public interface Model {
 
 	public enum Order {

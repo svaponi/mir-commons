@@ -31,6 +31,12 @@ import it.miriade.commons.model.entities.ModelEntity;
 import it.miriade.commons.utils.ExHandler;
 import it.miriade.commons.utils.StringHandler;
 
+/**
+ * @See {@link GenericDao}
+ * @author svaponi
+ * @param <E>
+ * @param <PK>
+ */
 @SuppressWarnings("unchecked")
 public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> implements GenericDao<E, PK> {
 

@@ -5,6 +5,13 @@ import java.util.Comparator;
 
 import it.miriade.commons.model.entities.ModelEntity;
 
+/**
+ * Comparator che confronta due oggetti POJO in base al valore di una loro proprietà di testo. Il nome di tale proprietà
+ * è settato nel costruttore.
+ * 
+ * @See {@link Comparator}
+ * @author svaponi
+ */
 public class StringFieldComparator implements Comparator<ModelEntity<?>> {
 
 	private String getterName;

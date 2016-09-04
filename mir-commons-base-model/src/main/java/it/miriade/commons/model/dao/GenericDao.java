@@ -8,6 +8,14 @@ import java.util.Set;
 
 import it.miriade.commons.model.entities.ModelEntity;
 
+/**
+ * Classe chiave del modulo, definisce i metodi di accesso al dato che l'implementazione del DAO dovrà implementare e
+ * che saranno dunque esposti all'utente.
+ * 
+ * @author svaponi
+ * @param <E>
+ * @param <PK>
+ */
 public interface GenericDao<E extends ModelEntity<PK>, PK extends Serializable> {
 
 	// =================================================================================================================

@@ -7,6 +7,12 @@ import java.util.Vector;
 
 import it.miriade.commons.utils.StringHandler;
 
+/**
+ * Incapsula il risultato della query.
+ * 
+ * @author svaponi
+ * @created Jul 21, 2016 13:10:30 PM
+ */
 public class DbResult {
 
 	public List<List<Object>> set = new ArrayList<List<Object>>();

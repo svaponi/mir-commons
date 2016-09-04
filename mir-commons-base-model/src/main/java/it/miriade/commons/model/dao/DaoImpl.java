@@ -20,15 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.miriade.commons.collections.CollectionUtils;
 import it.miriade.commons.model.Model;
-import it.miriade.commons.model.entities.ModelEntity;
 import it.miriade.commons.utils.ExHandler;
 import it.miriade.commons.utils.StringHandler;
 
 /**
- * Implementa solo i metodi che non hanno il GenericTypeArgument <D> nella firma. Viene per salvare entity di qualsiasi
- * tipo, purchè estendino {@link ModelEntity}, e per azioni indipendenti dagli oggetti come <code>select NEXTVAL from
- * sequence</code>.
- * 
+ * @See {@link Dao}
  * @author svaponi
  */
 public class DaoImpl implements Dao {

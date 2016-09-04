@@ -11,6 +11,12 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
+/**
+ * Utility per esporre all'utente oggetti a basso livello per l'accesso al DB, come {@link Connection},
+ * {@link DataSource} o {@link JdbcTemplate}.
+ * 
+ * @author svaponi
+ */
 public class DbUtil {
 
 	protected JdbcTemplate jdbcTemplate;

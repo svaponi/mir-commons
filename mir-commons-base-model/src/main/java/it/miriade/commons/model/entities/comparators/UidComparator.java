@@ -5,6 +5,12 @@ import java.util.Comparator;
 
 import it.miriade.commons.model.entities.ModelEntity;
 
+/**
+ * Comparator che confronta due oggetti {@link ModelEntity} in base al valore del loro Unique ID.
+ * 
+ * @See {@link Comparator}
+ * @author svaponi
+ */
 public class UidComparator<PK extends Serializable> implements Comparator<ModelEntity<PK>> {
 
 	@SuppressWarnings("unchecked")

@@ -1,6 +1,7 @@
-# mir-commons-db-utils
+# mir-commons-db-utils <sup><sub>[[Javadoc](https://svaponi.github.io/mir-commons/mir-commons-db-utils)]</sub></sup>
 
-Provides features to access DB without Hibernate, ideal for simple projects.
+Provides features to access DB without Hibernate, ideal for simple projects or feasibility tests.
+
 
 ## How to
 
