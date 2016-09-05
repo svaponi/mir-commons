@@ -49,14 +49,6 @@ public class LogInitializerServletWithNamingTemplate extends LogInitializerServl
 
 	public static final String PROPERTY_FILE_NAMING_TEMPLATE_defaultValue = "logging/log4j_%s.properties";
 
-	/*
-	 * Esempio di utilizzo dei parametri di inizializzazione della servlet:
-	 * <init-param>
-	 * <param-name>propertyFileNamingTemplate</param-name>
-	 * <param-value>path/to/logging/configuration/directory/log4j%s.properties</param-value>
-	 * </init-param>
-	 */
-
 	/**
 	 * Metodo delegato a recuperare il path del propertyFile di log4j
 	 * 

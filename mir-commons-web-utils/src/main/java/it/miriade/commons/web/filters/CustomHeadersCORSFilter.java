@@ -61,9 +61,9 @@ public class CustomHeadersCORSFilter extends SimpleCORSFilter {
 			accessControlHeaders.put(param, value);
 		}
 
-		if (_logger.isDebugEnabled())
+		if (logger.isDebugEnabled())
 			for (String headerName : accessControlHeaders.keySet())
-				_logger.debug("CORS filter header \"%s\" => \"%s\" ", headerName, accessControlHeaders.get(headerName));
+				logger.debug("CORS filter header \"%s\" => \"%s\" ", headerName, accessControlHeaders.get(headerName));
 
 		super.init(config);
 	}

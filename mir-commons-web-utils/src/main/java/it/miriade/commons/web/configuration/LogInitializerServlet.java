@@ -25,7 +25,6 @@ import it.miriade.commons.utils.StringHandler;
 public abstract class LogInitializerServlet extends HttpServlet implements Keys {
 
 	private static final long serialVersionUID = 1L;
-	// protected static final Logger staticLog = Logger.getLoggr(Log4JServletInitializer.class);
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected String configFilePath;
@@ -66,7 +65,7 @@ public abstract class LogInitializerServlet extends HttpServlet implements Keys 
 	}
 
 	/**
-	 * Legge il paramentro <code>&lt;init-param&gt;<code> dalla configurazione della servlet, ovvero dal web.xml.
+	 * Legge il paramentro <code>&lt;init-param&gt;</code> dalla configurazione della servlet, ovvero dal web.xml.
 	 * 
 	 * @return
 	 */
@@ -80,7 +79,7 @@ public abstract class LogInitializerServlet extends HttpServlet implements Keys 
 	}
 
 	/**
-	 * Legge il paramentro <code>&lt;init-param&gt;<code> dalla configurazione della servlet, ovvero dal web.xml. In
+	 * Legge il paramentro <code>&lt;init-param&gt;</code> dalla configurazione della servlet, ovvero dal web.xml. In
 	 * caso di parametro mancante controlla tra le sistem propeties preappendendo l'identificativo di miriade
 	 * "-Dmiriade."
 	 * 

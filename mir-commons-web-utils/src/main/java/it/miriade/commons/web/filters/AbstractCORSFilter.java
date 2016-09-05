@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCORSFilter implements Filter, CORS {
 
-	protected final Logger _logger = LoggerFactory.getLogger(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public abstract void addHeaders(HttpServletResponse response);
 
@@ -37,11 +37,11 @@ public abstract class AbstractCORSFilter implements Filter, CORS {
 	}
 
 	public void init(FilterConfig filterConfig) {
-		_logger.trace("Filter " + filterConfig.getFilterName() + " initiated with " + filterConfig);
+		logger.trace("Filter " + filterConfig.getFilterName() + " initiated with " + filterConfig);
 	}
 
 	public void destroy() {
-		_logger.trace("Filter destroyed");
+		logger.trace("Filter destroyed");
 	}
 
 }

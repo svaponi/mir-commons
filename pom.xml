@@ -25,6 +25,8 @@
 		</developer>
 	</developers>
 
+	<description>Utilities for Java programming with Spring and Hibernate.</description>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -49,13 +51,13 @@
 		<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>${project.basedir}/src/main/resources/commons</directory>
+				<directory>${project.basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
 		<testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
 		<testResources>
 			<testResource>
-				<directory>${project.basedir}/src/test/resources/commons</directory>
+				<directory>${project.basedir}/src/test/resources</directory>
 			</testResource>
 		</testResources>
 		<plugins>
@@ -140,5 +142,4 @@
 		</dependency>
 
 	</dependencies>
-	<description>Utilities for Java (web) programming with Spring.</description>
 </project>

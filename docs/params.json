@@ -1,6 +1,0 @@
-{
-  "name": "Mir-commons",
-  "tagline": "Utilities for Java programming with Spring and Hibernate.",
-  "body": "# mir-commons\r\n\r\nUtilities for Java programming with Spring and Hibernate.\r\n\r\n- **[mir-commons-base-model](https://github.com/svaponi/mir-commons/tree/master/mir-commons-base-model)** module provides a DAO layer implementation right out-of-the-box, using Java Generics.\r\n\r\n- **[mir-commons-base-utils](https://github.com/svaponi/mir-commons/tree/master/mir-commons-base-utils)** provides common utilities to handle standard Java objects like String, Date, File, Collection, ecc..\r\n\r\n- **[mir-commons-db-utils](https://github.com/svaponi/mir-commons/tree/master/mir-commons-db-utils)** provides features to access DB without Hibernate, ideal for simple projects or feasibility tests.\r\n\r\n- **[mir-commons-web-utils](https://github.com/svaponi/mir-commons/tree/master/mir-commons-web-utils)** provides features to easily use Spring MVC, both with UI and REST API.\r\n",
-  "note": "Don't delete this file! It's used internally to help with page regeneration."
-}

@@ -16,13 +16,13 @@ public interface Keys {
 	public static final String CURRENTENV = "currentenv";
 
 	/**
-	 * Nome della proprietà (o <init-param>) contenente il template per identificare il log4j.properties, es:
+	 * Nome della proprietà (o &lt;init-param&gt;) contenente il template per identificare il log4j.properties, es:
 	 * logging/log4j_%s.properties
 	 */
 	public static final String LOG_CONFIG_FILE_NAMING_TEMPLATE = "log.config.file.naming.template";
 
 	/**
-	 * Nome della proprietà (o <init-param>) con il path al log4j.properties
+	 * Nome della proprietà (o &lt;init-param&gt;) con il path al log4j.properties
 	 */
 	public static final String LOG_CONFIG_FILE_PATH__property = "log.config.file.path";
 

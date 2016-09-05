@@ -1,5 +1,6 @@
-<!-- permette di impostare un periodo di auto-aggiornamento delle proprietà -->
-<configuration scan="true">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.padual.com/java/logback.xsd"
+	scan="true">
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
