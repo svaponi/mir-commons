@@ -5,12 +5,13 @@
 	<parent>
 		<groupId>it.miriade.commons</groupId>
 		<artifactId>mir-commons</artifactId>
-		<version>2.0.1</version>
+		<version>2.1.0</version>
 	</parent>
 
 	<name>${project.artifactId}-${project.version}</name>
 
 	<properties>
+		<docs.basedir>${project.parent.basedir}/docs/${project.artifactId}/</docs.basedir>
 		<springframework.version>4.0.6.RELEASE</springframework.version>
 		<springframework.hateoas.version>0.9.0.RELEASE</springframework.hateoas.version>
 		<fasterxml.jackson.version>2.5.1</fasterxml.jackson.version>
@@ -39,6 +40,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${springframework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
