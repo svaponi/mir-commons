@@ -5,18 +5,37 @@
 	<parent>
 		<groupId>it.miriade.commons</groupId>
 		<artifactId>mir-commons</artifactId>
-		<version>2.0.1</version>
+		<version>2.1.0</version>
 	</parent>
 
 	<name>${project.artifactId}-${project.version}</name>
 
 	<properties>
+
 		<springframework.version>4.0.6.RELEASE</springframework.version>
 		<hibernate.version>4.3.5.Final</hibernate.version>
-		<!-- test db -->
+
+		<!-- Postgres (usato nei test) -->
 		<postgresql.version>9.4-1201-jdbc41</postgresql.version>
-		<ojdbc.version>11.2.0.3</ojdbc.version>
+
+		<!-- Oracle JDK 1.6 -->
+		<oracle.artifact>ojdbc6</oracle.artifact>
+		<oracle.version>11.2.0.3</oracle.version>
+
+		<!-- Oracle JDK 1.7 (jar non trovato) -->
+		<!-- <oracle.artifact>ojdbc7</oracle.artifact> -->
+		<!-- <oracle.version>12.1.0.2</oracle.version> -->
+
 	</properties>
+
+	<repositories>
+		<!-- Oracle repository -->
+		<repository>
+			<id>codelds</id>
+			<url>https://code.lds.org/nexus/content/groups/main-repo</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 
 		<!-- ===================================================================================================== -->
@@ -35,6 +54,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${springframework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -61,8 +86,8 @@
 		<!-- Oracle -->
 		<dependency>
 			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<version>${ojdbc.version}</version>
+			<artifactId>${oracle.artifact}</artifactId>
+			<version>${oracle.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
