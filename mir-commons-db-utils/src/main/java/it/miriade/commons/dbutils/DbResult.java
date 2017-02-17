@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-import it.miriade.commons.utils.StringHandler;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Incapsula il risultato della query.
@@ -36,7 +36,7 @@ public class DbResult {
 	}
 
 	public Object get(final int rowId, final String colName) {
-		if (StringHandler.noText(colName))
+		if (StringUtils.isBlank(colName))
 			throw new IllegalArgumentException("Invalid column name");
 		if (!columns.contains(colName))
 			throw new IllegalArgumentException("Invalid column name <" + colName + ">");

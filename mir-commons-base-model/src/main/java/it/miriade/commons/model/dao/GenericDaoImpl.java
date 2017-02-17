@@ -21,15 +21,14 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.miriade.commons.collections.CollectionUtils;
 import it.miriade.commons.model.Model;
 import it.miriade.commons.model.entities.ModelEntity;
-import it.miriade.commons.utils.ExHandler;
-import it.miriade.commons.utils.StringHandler;
+import it.miriade.commons.model.utils.ToStringUtil;
 
 /**
  * @See {@link GenericDao}
@@ -39,6 +38,9 @@ import it.miriade.commons.utils.StringHandler;
  */
 @SuppressWarnings("unchecked")
 public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> implements GenericDao<E, PK> {
+
+	@Value("${miriade.dao.throwex:false}")
+	protected boolean throwEx = false;
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected final boolean isTraceEnabled = logger.isTraceEnabled();
@@ -50,6 +52,28 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 
 	private Class<E> entityClass;
 
+	public GenericDaoImpl() {
+		super();
+	}
+
+	public GenericDaoImpl(Class<E> entityClass) {
+		super();
+		this.setEntityClass(entityClass);
+	}
+
+	/**
+	 * Imposta se rilanciare le eventuali eccezioni dopo averle
+	 * catch-ate/loggate.
+	 * 
+	 * @param throwEx
+	 */
+	public void throwEx(boolean throwEx) {
+		this.throwEx = throwEx;
+	}
+
+	/**
+	 * @return la classe della entity
+	 */
 	public Class<E> getEntityClass() {
 		return entityClass;
 	}
@@ -59,24 +83,22 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 		this.prefixInfo = String.format(PREFIX_TEMPLATE, entityClass.getSimpleName());
 	}
 
-	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
-		this.hibernateTemplate = hibernateTemplate;
-	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public HibernateTemplate getHibernateTemplate() {
 		return hibernateTemplate;
 	}
 
-	public GenericDaoImpl() {
-		super();
+	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
+		this.hibernateTemplate = hibernateTemplate;
 	}
 
-	public GenericDaoImpl(Class<E> entityClass) {
-		super();
-		this.entityClass = entityClass;
-		this.prefixInfo = String.format(PREFIX_TEMPLATE, entityClass.getSimpleName());
-	}
-
+	/**
+	 * 
+	 * @return la sessione attiva di Hibernate
+	 */
 	public Session getSession() {
 		try {
 			Session session = this.hibernateTemplate.getSessionFactory().getCurrentSession();
@@ -109,7 +131,8 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 
 	@Override
 	public String toString() {
-		return String.format("%s<%s> [%s] ", this.getClass().getSimpleName(), entityClass.getSimpleName(), super.toString());
+		return String.format("%s<%s> [%s] ", this.getClass().getSimpleName(), entityClass.getSimpleName(),
+				super.toString());
 	}
 
 	// GENERIC DAO methods
@@ -120,10 +143,9 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 		try {
 			this.hibernateTemplate.saveOrUpdate(entity);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s save entity %s ", prefixInfo, print(entity)));
+			logger.debug(String.format("%s save entity %s ", prefixInfo, entityToString(entity)));
 		}
 	}
 
@@ -133,10 +155,9 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			Serializable result = this.hibernateTemplate.save(entity);
 			return (PK) result;
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s save entity %s ", prefixInfo, print(entity)));
+			logger.debug(String.format("%s save entity %s ", prefixInfo, entityToString(entity)));
 		}
 		return null;
 	}
@@ -146,16 +167,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 		try {
 			this.hibernateTemplate.merge(entity);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s merge entity %s ", prefixInfo, print(entity)));
+			logger.debug(String.format("%s merge entity %s ", prefixInfo, entityToString(entity)));
 		}
-	}
-
-	// usato nei 3 metodi qui sopra
-	private Object print(E entity) {
-		return logger.isTraceEnabled() ? StringHandler.pojoToString(entity) : entity.getClass().getSimpleName() + " (" + entity.getUid() + ")";
 	}
 
 	@Transactional(readOnly = false)
@@ -166,10 +181,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			if (entity != null)
 				this.hibernateTemplate.delete(entity);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s remove entity with id %s %s", prefixInfo, id, entity != null ? "SUCCESS" : "FAIL"));
+			logger.debug(String.format("%s remove entity with id %s %s", prefixInfo, id,
+					entity != null ? "SUCCESS" : "FAIL"));
 		}
 		return entity;
 	}
@@ -183,8 +198,7 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			logger.debug(String.format("%s delete all entities, %d deleted", prefixInfo, result));
 			return result;
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		}
 		return Model.ERROR_CODE;
 	}
@@ -199,8 +213,7 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			logger.debug(String.format("%s delete all collection entities, %d deleted", prefixInfo, result));
 			return result;
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		}
 		return Model.ERROR_CODE;
 	}
@@ -222,10 +235,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 		try {
 			entity = (E) this.hibernateTemplate.get(this.entityClass, id);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve entity with id %s %s", prefixInfo, id, entity != null ? "SUCCESS" : "FAIL"));
+			logger.debug(String.format("%s retrieve entity with id %s %s", prefixInfo, id,
+					entity != null ? "SUCCESS" : "FAIL"));
 		}
 		return entity;
 	}
@@ -236,10 +249,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 		try {
 			entity = (E) this.hibernateTemplate.get(this.entityClass, id);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s search entity with id %s %s", prefixInfo, id, entity != null ? "EXISTS" : "NOT EXISTS"));
+			logger.debug(String.format("%s search entity with id %s %s", prefixInfo, id,
+					entity != null ? "EXISTS" : "NOT EXISTS"));
 		}
 		return entity != null;
 	}
@@ -261,10 +274,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			String hql = "from " + this.entityClass.getSimpleName();
 			results = (List<E>) this.hibernateTemplate.find(hql);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d items", prefixInfo, CollectionUtils.size(results)));
+			logger.debug(
+					String.format("%s retrieve list of %d items", prefixInfo, (results == null ? 0 : results.size())));
 		}
 		return results;
 	}
@@ -274,19 +287,20 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 		List<E> results = null;
 		try {
 			/*
-			 * DISTINCT_ROOT_ENTITY aggiunto per evitare doppioni nelle entity che contengono collection @OneToMany
-			 * su tabelle esterne.
-			 * ATTENZIONE! La paginazione funziona solo se LAZY fetch, altrimenti prima limita il numero di risulti poi
-			 * fa la DISTINCT, ritornando un numero inferiore di elementi per pagina.
+			 * DISTINCT_ROOT_ENTITY aggiunto per evitare doppioni nelle entity
+			 * che contengono collection @OneToMany su tabelle esterne.
+			 * ATTENZIONE! La paginazione funziona solo se LAZY fetch,
+			 * altrimenti prima limita il numero di risulti poi fa la DISTINCT,
+			 * ritornando un numero inferiore di elementi per pagina.
 			 */
 			DetachedCriteria detachedCriteria = DetachedCriteria.forClass(this.entityClass);
 			detachedCriteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 			results = (List<E>) this.hibernateTemplate.findByCriteria(detachedCriteria, offset, size);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d items (offset: %s, size: %s)", prefixInfo, CollectionUtils.size(results), offset, size));
+			logger.debug(String.format("%s retrieve list of %d items (offset: %s, size: %s)", prefixInfo,
+					(results == null ? 0 : results.size()), offset, size));
 		}
 		return results;
 	}
@@ -300,19 +314,19 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			query.setParameterList("ids", ids);
 			results = (List<E>) query.list();
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list by IDs (named-query: %s, IDs: %s)", prefixInfo, CollectionUtils.size(results), hql,
-					Arrays.deepToString(ids.toArray())));
+			logger.debug(String.format("%s retrieve list by IDs (named-query: %s, IDs: %s)", prefixInfo,
+					(results == null ? 0 : results.size()), hql, Arrays.deepToString(ids.toArray())));
 		}
 		return results;
 	}
 
 	/*
-	 * ============================================================================================================
-	 * Sequence NEXT VAL (HQL)
-	 * ============================================================================================================
+	 * =========================================================================
+	 * =================================== Sequence NEXT VAL (HQL)
+	 * =========================================================================
+	 * ===================================
 	 */
 
 	public Long getSequenceNextValue(String sequence) {
@@ -323,8 +337,7 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			key = (Long) query.uniqueResult();
 		} catch (Exception e) {
 			key = (long) Model.ERROR_CODE;
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
 			logger.debug(String.format("%s retrieve sequence next value %d (sequence: %s)", prefixInfo, key, sequence));
 		}
@@ -332,9 +345,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 	}
 
 	/*
-	 * ============================================================================================================
-	 * HQL Queries methods
-	 * ============================================================================================================
+	 * =========================================================================
+	 * =================================== HQL Queries methods
+	 * =========================================================================
+	 * ===================================
 	 */
 
 	@Transactional(readOnly = true)
@@ -351,16 +365,16 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 				}
 			results = (List<E>) query.list();
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d items (hql-query: %s, params: %s)", prefixInfo, CollectionUtils.size(results), hql, params));
+			logger.debug(String.format("%s retrieve list of %d items (hql-query: %s, params: %s)", prefixInfo,
+					(results == null ? 0 : results.size()), hql, params));
 		}
 		/*
-		 * svaponi - 21 Apr 2015
-		 * Sostituisco il ritorno di una collection vuota per poter distinguere a valle lka differenza tra una query con
-		 * risultato nullo ed una che ha generato un'eccezione
-		 * return new ArrayList<Object[]>();
+		 * svaponi - 21 Apr 2015 Sostituisco il ritorno di una collection vuota
+		 * per poter distinguere a valle lka differenza tra una query con
+		 * risultato nullo ed una che ha generato un'eccezione return new
+		 * ArrayList<Object[]>();
 		 */
 		return results;
 	}
@@ -378,20 +392,20 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 				}
 			results = (List<E>) query.list();
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
 			logger.debug(String.format("%s retrieve entity (named-query: %s, params: %s) %s", prefixInfo, hql, params,
-					PrintUtil.printResult(results, isTraceEnabled)));
+					resultToString(results)));
 		}
 		// ** returns single ENTITY **
 		return (results != null && results.size() > 0) ? (E) results.get(0) : null;
 	}
 
 	/*
-	 * ============================================================================================================
-	 * Named Queries methods
-	 * ============================================================================================================
+	 * =========================================================================
+	 * =================================== Named Queries methods
+	 * =========================================================================
+	 * ===================================
 	 */
 
 	@Transactional(readOnly = true)
@@ -401,7 +415,8 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 
 	/**
 	 * Come <code>getListByNamedQueryAndParams</code> però con paginazione.<br/>
-	 * Presuppone che esista la named-query con i parametri appositi, ovvero (offset, size):<br/>
+	 * Presuppone che esista la named-query con i parametri appositi, ovvero
+	 * (offset, size):<br/>
 	 * <code>LIMIT :size OFFSET :offset</code>
 	 */
 	@Transactional(readOnly = true)
@@ -420,17 +435,17 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			Object[] paramValues = p.values().toArray(new Object[] {});
 			results = (List<E>) this.hibernateTemplate.findByNamedQueryAndNamedParam(queryName, paramKeys, paramValues);
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d items (named-query: %s, params: %s, offset: %s, size: %s)", prefixInfo,
-					CollectionUtils.size(results), queryName, params, offset, size));
+			logger.debug(
+					String.format("%s retrieve list of %d items (named-query: %s, params: %s, offset: %s, size: %s)",
+							prefixInfo, (results == null ? 0 : results.size()), queryName, params, offset, size));
 		}
 		/*
-		 * svaponi - 21 Apr 2015
-		 * Sostituisco il ritorno di una collection vuota per poter distinguere a valle lka differenza tra una query con
-		 * risultato nullo ed una che ha generato un'eccezione
-		 * return new ArrayList<Object[]>();
+		 * svaponi - 21 Apr 2015 Sostituisco il ritorno di una collection vuota
+		 * per poter distinguere a valle lka differenza tra una query con
+		 * risultato nullo ed una che ha generato un'eccezione return new
+		 * ArrayList<Object[]>();
 		 */
 		return results;
 	}
@@ -444,31 +459,35 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			Object[] paramValues = params.values().toArray(new Object[] {});
 			results = (List<E>) this.hibernateTemplate.findByNamedQueryAndNamedParam(queryName, paramKeys, paramValues);
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve entity (named-query: %s, params: %s) %s", prefixInfo, queryName, params,
-					PrintUtil.printResult(results, isTraceEnabled)));
+			logger.debug(String.format("%s retrieve entity (named-query: %s, params: %s) %s", prefixInfo, queryName,
+					params, resultToString(results)));
 		}
 		// ** returns single ENTITY **
 		return (results != null && results.size() > 0) ? (E) results.get(0) : null;
 	}
 
 	/*
-	 * ============================================================================================================
-	 * Criteria methods
-	 * ============================================================================================================
+	 * =========================================================================
+	 * =================================== Criteria methods
+	 * =========================================================================
+	 * ===================================
 	 */
 
 	/**
-	 * Il metodo rihiama hibernateTemplate.findByCriteria passandogli un DetachedCriteria. I Criteria sono costruiti con
+	 * Il metodo rihiama hibernateTemplate.findByCriteria passandogli un
+	 * DetachedCriteria. I Criteria sono costruiti con
 	 * <ul>
-	 * <li><strong>Restrictions.in</strong> se criteria.get(key) è una collection di valori</li>
+	 * <li><strong>Restrictions.in</strong> se criteria.get(key) è una
+	 * collection di valori</li>
 	 * <li><strong>Restrictions.eq</strong> altrimenti</li>
 	 * </ul>
-	 * <strong>Updated 2015-09-09.</strong> In input accetta anche un oggetto di tipo {@link Criterion}, in questo modo
-	 * non serve implementare tutte le casistiche. Ovvero per ogni caso speciale è sufficiente costrire il Criterion nel
-	 * relativo Service che usa questo DAO e passarlo dentro la mappa di parametri.
+	 * <strong>Updated 2015-09-09.</strong> In input accetta anche un oggetto di
+	 * tipo {@link Criterion}, in questo modo non serve implementare tutte le
+	 * casistiche. Ovvero per ogni caso speciale è sufficiente costrire il
+	 * Criterion nel relativo Service che usa questo DAO e passarlo dentro la
+	 * mappa di parametri.
 	 *
 	 * @param criteria
 	 *            oggetto Map contente i criteri di restrizione
@@ -481,17 +500,17 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			detachedCriteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 			results = (List<E>) this.hibernateTemplate.findByCriteria(detachedCriteria);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d items (criteria: %s)", prefixInfo, CollectionUtils.size(results), criteria));
+			logger.debug(String.format("%s retrieve list of %d items (criteria: %s)", prefixInfo,
+					(results == null ? 0 : results.size()), criteria));
 		}
 		return results;
 	}
 
 	/**
-	 * Metodo equivalente a {@link CopyOfGenericDaoImpl#getListByCriteria(Map)}, con in più la possibilità di paginare i
-	 * risultati.
+	 * Metodo equivalente a {@link CopyOfGenericDaoImpl#getListByCriteria(Map)},
+	 * con in più la possibilità di paginare i risultati.
 	 * 
 	 * @param criteria
 	 * @param offset
@@ -506,11 +525,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			detachedCriteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 			results = (List<E>) this.hibernateTemplate.findByCriteria(detachedCriteria, offset * size, size);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d items (criteria: %s, offset: %s, size: %s)", prefixInfo, CollectionUtils.size(results), criteria,
-					offset, size));
+			logger.debug(String.format("%s retrieve list of %d items (criteria: %s, offset: %s, size: %s)", prefixInfo,
+					(results == null ? 0 : results.size()), criteria, offset, size));
 		}
 		return results;
 	}
@@ -532,8 +550,9 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 	}
 
 	/**
-	 * Metodo equivalente a {@link CopyOfGenericDaoImpl#getListByCriteria(Map)}, però ritorna una sola entity di tipo
-	 * dinamico {@link E} al posto della solita {@link List<E>}.
+	 * Metodo equivalente a {@link CopyOfGenericDaoImpl#getListByCriteria(Map)},
+	 * però ritorna una sola entity di tipo dinamico {@link E} al posto della
+	 * solita {@link List<E>}.
 	 * 
 	 * @param criteria
 	 *            oggetto Map contente i criteri di restrizione
@@ -546,10 +565,10 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 			detachedCriteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 			results = (List<E>) this.hibernateTemplate.findByCriteria(detachedCriteria);
 		} catch (ObjectNotFoundException | DataAccessException e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve entity (criteria: %s) %s", prefixInfo, criteria, PrintUtil.printResult(results, isTraceEnabled)));
+			logger.debug(String.format("%s retrieve entity (criteria: %s) %s", prefixInfo, criteria,
+					resultToString(results)));
 		}
 		// ** returns single ENTITY **
 		return (results != null && results.size() > 0) ? (E) results.get(0) : null;
@@ -564,13 +583,12 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 	}
 
 	/*
-	 * ------------------------------------------------------------------------------------------------------------
-	 * METODI AUSILIARI
-	 * ------------------------------------------------------------------------------------------------------------
+	 * Metodi ausiliari
 	 */
 
 	/**
-	 * Metodo base per costrire un {@link DetachedCriteria} partendo dalla mappa di parametri in input.
+	 * Metodo base per costrire un {@link DetachedCriteria} partendo dalla mappa
+	 * di parametri in input.
 	 * 
 	 * @param criteria
 	 * @return
@@ -595,6 +613,49 @@ public class GenericDaoImpl<E extends ModelEntity<PK>, PK extends Serializable> 
 				}
 			}
 		return detachedCriteria;
+	}
+
+	/**
+	 * In caso il flag {@link #throwEx} sia TRUE rilancio la eccezione (solo se
+	 * è una {@link RuntimeException}). Se il log è a DEBUG stampo tutto lo
+	 * stacktrace altrimenti solo il message della root.
+	 * 
+	 * @param e
+	 * @throws RuntimeException
+	 */
+	private void handleException(Exception e) throws RuntimeException {
+		if (logger.isDebugEnabled())
+			logger.error(e.getMessage(), e);
+		else
+			logger.error(e.getMessage());
+		if (throwEx && e instanceof RuntimeException)
+			throw (RuntimeException) e;
+	}
+
+	/**
+	 * 
+	 * Stampa l'input con verbosità variabile in base al livello di log
+	 * 
+	 * @param results
+	 * @return
+	 */
+	private String resultToString(List<?> results) {
+		return results == null ? "FAIL (exception occurred)"
+				: results.size() == 1 ? "SUCCESS"
+						: String.format("FAIL (size: %s) %s", results.size(),
+								logger.isDebugEnabled() ? ToStringUtil.recursiveToString(results) : "");
+	}
+
+	/**
+	 * 
+	 * Stampa l'input con verbosità variabile in base al livello di log
+	 * 
+	 * @param entity
+	 * @return
+	 */
+	private String entityToString(E entity) {
+		return logger.isTraceEnabled() ? ToStringUtil.recursiveToString(entity)
+				: entity.getClass().getSimpleName() + " (" + entity.getUid() + ")";
 	}
 
 }

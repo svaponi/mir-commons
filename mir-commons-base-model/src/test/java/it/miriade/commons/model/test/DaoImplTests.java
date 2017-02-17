@@ -3,6 +3,7 @@ package it.miriade.commons.model.test;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -22,7 +24,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import it.miriade.commons.model.dao.Dao;
 import it.miriade.commons.model.dao.GenericDao;
 import it.miriade.commons.model.test.entities.Foo;
-import it.miriade.commons.utils.DateHandler;
+import it.miriade.commons.skipintegration.SkipIntegrationTestsRule;
+import it.miriade.commons.skipintegration.SkipIntegrationTestsRule.SkipIntegrationTests;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(Constants.CONTEXT_XML_FILE)
@@ -32,30 +35,13 @@ public class DaoImplTests {
 	final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	Dao dao;
+	private Dao dao;
 
 	@Autowired
-	GenericDao<Foo, String> fooDao;
+	private GenericDao<Foo, String> fooDao;
 
-	// @BeforeClass
-	// public static void oneTimeSetUp() {
-	// slog.debug("@BeforeClass");
-	// }
-
-	// @AfterClass
-	// public static void oneTimeTearDown() {
-	// slog.debug("@AfterClass");
-	// }
-
-	// @Before
-	// public void setUp() {
-	// log.debug("@Before");
-	// }
-
-	// @After
-	// public void tearDown() {
-	// log.debug("@After");
-	// }
+	@Rule
+	public SkipIntegrationTestsRule rule = new SkipIntegrationTestsRule();
 
 	@Test
 	public void t0_nullObjects() {
@@ -65,7 +51,8 @@ public class DaoImplTests {
 		Assert.assertNotNull("GenericDao<Foo, String> is null", fooDao);
 	}
 
-	// @Test
+	@Test
+	@SkipIntegrationTests
 	public void t1_deleteAll() {
 		log.debug("t1_deleteAll");
 
@@ -75,20 +62,24 @@ public class DaoImplTests {
 	}
 
 	@Test
+	@SkipIntegrationTests
 	public void t2_selectQuery() {
 		log.debug("t2_selectQuery");
 
-		List<?> result = dao
-				.executeSelectQuery("SELECT 1 as a, 2.0 as b, to_char(now(),'YYYY/MM/DD HH24:MI:SS.SSS') as now_char, now(), cast(now() as date) as now_date");
+		List<?> result = dao.executeSelectQuery(
+				"SELECT 1 as a, 2.0 as b, to_char(now(),'YYYY/MM/DD HH24:MI:SS.SSS') as now_char, now(), cast(now() as date) as now_date");
 		show(result);
 
 		Assert.assertNotNull("result is null", result);
 		Assert.assertSame("result has 1 row", result.size(), 1);
 		Assert.assertSame("result has 5 columns", ((Object[]) result.get(0)).length, 5);
-		Assert.assertEquals("type of value at row 0, column 0", ((Object[]) result.get(0))[0].getClass(), Integer.class);
-		Assert.assertEquals("type of value at row 0, column 1", ((Object[]) result.get(0))[1].getClass(), BigDecimal.class);
+		Assert.assertEquals("type of value at row 0, column 0", ((Object[]) result.get(0))[0].getClass(),
+				Integer.class);
+		Assert.assertEquals("type of value at row 0, column 1", ((Object[]) result.get(0))[1].getClass(),
+				BigDecimal.class);
 		Assert.assertEquals("type of value at row 0, column 2", ((Object[]) result.get(0))[2].getClass(), String.class);
-		Assert.assertEquals("type of value at row 0, column 3", ((Object[]) result.get(0))[3].getClass(), Timestamp.class);
+		Assert.assertEquals("type of value at row 0, column 3", ((Object[]) result.get(0))[3].getClass(),
+				Timestamp.class);
 		Assert.assertEquals("type of value at row 0, column 4", ((Object[]) result.get(0))[4].getClass(), Date.class);
 
 		result.clear();
@@ -100,7 +91,8 @@ public class DaoImplTests {
 		Assert.assertSame("result has 1 row", result.size(), 1);
 		// One column does not need an Object array
 		Assert.assertNotEquals("result has 1 column", result.get(0).getClass(), Object[].class);
-		Assert.assertEquals("value at row 0, column 0", result.get(0).toString().substring(0, 10), DateHandler.current("yyyy/MM/dd"));
+		Assert.assertEquals("value at row 0, column 0", result.get(0).toString().substring(0, 10),
+				new SimpleDateFormat("yyyy/MM/dd").format(new java.util.Date()));
 
 		result.clear();
 
@@ -118,6 +110,7 @@ public class DaoImplTests {
 	}
 
 	@Test
+	@SkipIntegrationTests
 	public void t3_nameQueryQuery() {
 		log.debug("t3_nameQueryQuery");
 
@@ -130,12 +123,16 @@ public class DaoImplTests {
 		Assert.assertNotNull("result is null", result);
 		Assert.assertEquals("result size", result.size(), 2);
 		Assert.assertEquals("result columns", ((Object[]) result.get(0)).length, 3);
-		Assert.assertEquals("type of value at row 0, column 0", ((Object[]) result.get(0))[0].getClass(), Integer.class);
+		Assert.assertEquals("type of value at row 0, column 0", ((Object[]) result.get(0))[0].getClass(),
+				Integer.class);
 		Assert.assertEquals("type of value at row 0, column 1", ((Object[]) result.get(0))[1].getClass(), String.class);
-		Assert.assertEquals("type of value at row 0, column 2", ((Object[]) result.get(0))[2].getClass(), BigDecimal.class);
-		Assert.assertEquals("type of value at row 1, column 0", ((Object[]) result.get(1))[0].getClass(), Integer.class);
+		Assert.assertEquals("type of value at row 0, column 2", ((Object[]) result.get(0))[2].getClass(),
+				BigDecimal.class);
+		Assert.assertEquals("type of value at row 1, column 0", ((Object[]) result.get(1))[0].getClass(),
+				Integer.class);
 		Assert.assertEquals("type of value at row 1, column 1", ((Object[]) result.get(1))[1].getClass(), String.class);
-		Assert.assertEquals("type of value at row 1, column 2", ((Object[]) result.get(1))[2].getClass(), BigDecimal.class);
+		Assert.assertEquals("type of value at row 1, column 2", ((Object[]) result.get(1))[2].getClass(),
+				BigDecimal.class);
 
 		Assert.assertEquals("value at row 0, column 0", ((Object[]) result.get(0))[0], 11);
 		Assert.assertEquals("value at row 0, column 1", ((Object[]) result.get(0))[1], "12");
@@ -146,6 +143,7 @@ public class DaoImplTests {
 	}
 
 	@Test
+	@SkipIntegrationTests
 	public void t4_create() {
 		log.debug("t4_create");
 
@@ -168,6 +166,7 @@ public class DaoImplTests {
 	}
 
 	@Test
+	@SkipIntegrationTests
 	public void t5_deleteAllAgain() {
 		log.debug("t5_deleteAllAgain");
 

@@ -5,35 +5,22 @@
 	<parent>
 		<groupId>it.miriade.commons</groupId>
 		<artifactId>mir-commons</artifactId>
-		<version>2.1.0</version>
+		<version>3.0.0</version>
 	</parent>
 
-	<name>${project.artifactId}-${project.version}</name>
-	<description>Fornisce implementazioni out-of-the-box- il Dao Layer, basati su Generic a 2 parametri:
-- &lt;E&gt; rimane la classe della entity che estende ModelEntity;
-- &lt;PK&gt; è la classe del UID, qui accetta qualsiasi purchè estenda Serializable;
-	</description>
+	<name>${project.artifactId}</name>
+	<description>Provides a ready-to-use DAO layer implementation based on Java Generics.</description>
 
 	<properties>
-		<springframework.version>4.0.6.RELEASE</springframework.version>
+		<docs.basedir>${project.parent.basedir}/docs/${project.artifactId}/</docs.basedir>
 		<hibernate.version>4.3.5.Final</hibernate.version>
+		<!-- Postgres (used for integration-tests) -->
 		<postgresql.version>9.4-1201-jdbc41</postgresql.version>
 	</properties>
+
 	<dependencies>
 
-		<!-- ===================================================================================================== -->
-		<!-- MIR COMMONS -->
-		<!-- ===================================================================================================== -->
-
-		<dependency>
-			<groupId>it.miriade.commons</groupId>
-			<artifactId>mir-commons-base-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- ===================================================================================================== -->
-		<!-- SPRING Dependencies -->
-		<!-- ===================================================================================================== -->
+		<!-- Spring -->
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -57,9 +44,7 @@
 			<version>${springframework.version}</version>
 		</dependency>
 
-		<!-- ===================================================================================================== -->
-		<!-- DATA PERSISTANCE Dependencies -->
-		<!-- ===================================================================================================== -->
+		<!-- Data persistance -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -72,17 +57,21 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 
-		<!-- ================================================================ -->
-		<!-- TEST dependencies -->
-		<!-- ================================================================ -->
+		<!-- Other dependencies -->
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
+		</dependency>
+
+		<!-- Test -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
-
-		<!-- db postgresql usato per i test -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

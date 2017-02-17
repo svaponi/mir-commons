@@ -21,14 +21,13 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import it.miriade.commons.collections.CollectionUtils;
-import it.miriade.commons.utils.StringHandler;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Permette di fare query e gestisce in modo trasparente la connessione. Torna un oggetto che incapsula il risultato
@@ -146,7 +145,7 @@ public class DbQuery {
 	public int update(final String query, final Collection<Object> params) {
 
 		log.debug("Query: {}", query);
-		if (CollectionUtils.notEmpty(params))
+		if (!CollectionUtils.isEmpty(params))
 			log.debug("Params: {}", params);
 
 		Connection conn = null;
@@ -195,7 +194,7 @@ public class DbQuery {
 	public DbResult select(final String query, final Collection<Object> params) {
 
 		log.debug("Query: {}", query);
-		if (CollectionUtils.notEmpty(params))
+		if (!CollectionUtils.isEmpty(params))
 			log.debug("Params: {}", params);
 
 		Connection conn = null;
@@ -286,8 +285,7 @@ public class DbQuery {
 			log.warn("Missing batch queries!");
 			return result;
 		} else
-			log.debug("Batch: {} quer{}\n{}", queries.size(), queries.size() == 1 ? "y" : "ies",
-					StringHandler.join("\n", "  <sql>%s</sql>", queries.toArray()));
+			log.debug("Batch: {} quer{}\n{}", queries.size(), queries.size() == 1 ? "y" : "ies", StringUtils.join(queries.toArray(), "\n</sql>\n<sql>"));
 
 		Connection conn = null;
 		Statement stmt = null;
@@ -347,7 +345,7 @@ public class DbQuery {
 					if (methodSet != null)
 						try {
 							type = methodSet.getParameterTypes()[0].getSimpleName();
-							tmp = ResultSet.class.getDeclaredMethod("get" + StringHandler.capitalize(type), String.class).invoke(result, property.getName());
+							tmp = ResultSet.class.getDeclaredMethod("get" + StringUtils.capitalize(type), String.class).invoke(result, property.getName());
 							log.debug("{} {} = {}; types: {}", type, property.getName(), tmp, Arrays.asList(methodSet.getParameterTypes()));
 							methodSet.invoke(resultBean, tmp);
 						} catch (Exception e) {
@@ -377,7 +375,7 @@ public class DbQuery {
 	 */
 	public <T> T getEntity(String query, Class<T> resultBeanClass) {
 		List<T> tmp = getEntityList(query, resultBeanClass);
-		if (CollectionUtils.notEmpty(tmp))
+		if (!CollectionUtils.isEmpty(tmp))
 			return tmp.get(0);
 		return null;
 	}

@@ -2,6 +2,7 @@ package it.miriade.commons.model.test;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -12,24 +13,24 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import it.miriade.commons.logging.LogbackInitializer;
 import it.miriade.commons.model.dao.GenericDao;
 import it.miriade.commons.model.test.entities.Foo;
+import it.miriade.commons.skipintegration.SkipIntegrationTestsRule;
+import it.miriade.commons.skipintegration.SkipIntegrationTestsRule.SkipIntegrationTests;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(Constants.CONTEXT_XML_FILE)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GenericDaoImplTests {
 
-	static {
-		new LogbackInitializer(Constants.LOG_CONFIG_FILE).init();
-	}
-
 	final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	@Qualifier("FooDao")
-	GenericDao<Foo, String> fooDao;
+	private GenericDao<Foo, String> fooDao;
+
+	@Rule
+	public SkipIntegrationTestsRule rule = new SkipIntegrationTestsRule();
 
 	@Test
 	public void test00_nullObjects() {
@@ -37,6 +38,7 @@ public class GenericDaoImplTests {
 	}
 
 	@Test
+	@SkipIntegrationTests
 	public void test01_deleteAll() {
 		log.debug("TEST: deleteAll()");
 
@@ -46,6 +48,7 @@ public class GenericDaoImplTests {
 	}
 
 	@Test
+	@SkipIntegrationTests
 	public void test02_create() {
 		log.debug("TEST: create()");
 

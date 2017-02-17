@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-
-import it.miriade.commons.utils.StringHandler;
 
 /**
  * Classe statica contenente metodi per maneggiare gli oggetti della gerarchia
@@ -52,7 +52,7 @@ public class ModelHandler {
 	}
 
 	public static int generateHashID(String separator, Object... contributes) {
-		String tmpstring = StringHandler.join(separator, contributes);
+		String tmpstring = StringUtils.join(contributes, separator);
 		return tmpstring.hashCode() & Integer.MAX_VALUE;
 	}
 
@@ -72,7 +72,7 @@ public class ModelHandler {
 	}
 
 	public static long generateHashLongID(String separator, Object... contributes) {
-		String tmpstring = StringHandler.join(separator, contributes);
+		String tmpstring = StringUtils.join(contributes, separator);
 		return tmpstring.hashCode() & Long.MAX_VALUE;
 	}
 
@@ -96,11 +96,11 @@ public class ModelHandler {
 		int groupNum = (contributes.length - 1 + GROUP_SIZE) / GROUP_SIZE;
 		for (int index = 0; index < groupNum; index++) {
 			Object[] args = Arrays.copyOfRange(contributes, index * GROUP_SIZE, Math.min(contributes.length, (index + 1) * GROUP_SIZE));
-			tmpstring = StringHandler.join(SEPARATOR, args);
+			tmpstring = StringUtils.join(args, SEPARATOR);
 			int tmp = tmpstring.hashCode() & Integer.MAX_VALUE;
 			hash.add(tmp);
 		}
-		return StringHandler.join(GROUP_SEPARATOR, hash.toArray());
+		return StringUtils.join(hash.toArray(), GROUP_SEPARATOR);
 	}
 
 	// =================================================================================================================================
@@ -118,7 +118,7 @@ public class ModelHandler {
 			Table annotation = clazz.getAnnotation(javax.persistence.Table.class);
 			String schema = annotation.schema();
 			String table = annotation.name();
-			if (StringHandler.hasText(schema))
+			if (StringUtils.isNotBlank(schema))
 				table = schema + "." + table;
 			return table;
 		}
@@ -135,17 +135,14 @@ public class ModelHandler {
 		if (clazz.isAnnotationPresent(javax.persistence.Table.class)) {
 			Table annotation = clazz.getAnnotation(javax.persistence.Table.class);
 			String schema = annotation.schema();
-			return StringHandler.toString(schema);
+			return Objects.toString(schema, "");
 		}
 		return "?";
 	}
 
 	/**
-	 * Metodo estrae tutte le proprietà dell'oggetto (in formato json-like), come
-	 * {@link StringHandler#pojoToString(Object)}. In più questo metodo a differenza scende ad ispezionare eventuali
-	 * proprietà di classe marcata @javax.persistence.Entity.
+	 * Metodo estrae tutte le proprietà dell'oggetto (in formato json-like).
 	 * 
-	 * @see StringHandler#pojoToString(Object)
 	 * @param model
 	 * @return
 	 */
@@ -156,8 +153,6 @@ public class ModelHandler {
 	/**
 	 * Come {@link ModelHandler#entityToString(Object)} però scende ricorsivamente fino al livello in input.
 	 * 
-	 * @see StringHandler#pojoToString(Object)
-	 * @see ModelHandler#entityToString(Object)
 	 * @param model
 	 * @param level
 	 * @return
@@ -184,10 +179,10 @@ public class ModelHandler {
 				buf.append("{");
 				for (Method method : model.getClass().getMethods())
 					if (method.getDeclaringClass().equals(model.getClass()) // 1)
-							&& !Modifier.isStatic(method.getModifiers()) 	// 2)
-							&& method.getName().startsWith("get") 			// 3)
-							&& method.getParameterTypes().length == 0 		// 4)
-							&& method.invoke(model) != null					// 5)
+						&& !Modifier.isStatic(method.getModifiers()) 	// 2)
+						&& method.getName().startsWith("get") 			// 3)
+						&& method.getParameterTypes().length == 0 		// 4)
+						&& method.invoke(model) != null					// 5)
 					) {
 						Object returned = method.invoke(model);
 						if (returned instanceof Object[]) {
@@ -248,10 +243,10 @@ public class ModelHandler {
 				 * 5) torna un oggetto non nullo
 				 */
 				if (method.getName().startsWith("get") 							// 1
-						&& method.getParameterTypes().length == 0 				// 2
-						&& method.getDeclaringClass().equals(source.getClass()) // 3
-						&& !Modifier.isStatic(method.getModifiers()) 			// 4
-						&& method.invoke(source) != null						// 5
+					&& method.getParameterTypes().length == 0 				// 2
+					&& method.getDeclaringClass().equals(source.getClass()) // 3
+					&& !Modifier.isStatic(method.getModifiers()) 			// 4
+					&& method.invoke(source) != null						// 5
 				) {
 					// prendo il valore dal getter
 					tmp = method.invoke(source);

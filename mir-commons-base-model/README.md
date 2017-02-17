@@ -1,6 +1,6 @@
 # mir-commons-base-model <sup><sub>[[Javadoc](https://svaponi.github.io/mir-commons/mir-commons-base-model)]</sub></sup>
 
-This module provide a DAO layer implementation right out-of-the-box, using Java Generics.
+Provides a ready-to-use DAO layer implementation based on Java Generics.
 
 ## How to
 

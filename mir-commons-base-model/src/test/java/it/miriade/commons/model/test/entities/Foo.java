@@ -1,6 +1,7 @@
 package it.miriade.commons.model.test.entities;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +12,6 @@ import javax.persistence.TemporalType;
 
 import it.miriade.commons.model.entities.ModelEntity;
 import it.miriade.commons.model.test.Constants;
-import it.miriade.commons.utils.StringHandler;
 
 @Entity
 @Table(name = Constants.FOO_TABLE, schema = Constants.DB_SCHEMA)
@@ -40,7 +40,7 @@ public class Foo implements ModelEntity<String> {
 
 	@Override
 	public String toString() {
-		return StringHandler.toString(name) + "" + StringHandler.toString(insertDate);
+		return Objects.toString(name, "") + "" + Objects.toString(insertDate, "");
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class Foo implements ModelEntity<String> {
 		if (!(obj instanceof Foo))
 			return false;
 		Foo foo = (Foo) obj;
-		return StringHandler.toString(name).equals(foo.getName());
+		return Objects.toString(name, "").equals(foo.getName());
 	}
 
 	@Override

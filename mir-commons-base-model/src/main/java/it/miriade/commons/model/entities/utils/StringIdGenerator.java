@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
@@ -17,15 +18,12 @@ import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.miriade.commons.utils.ExHandler;
-import it.miriade.commons.utils.StringHandler;
-
 /**
  * Generatore di stringhe analogo partendo dai valori di una sequence. Esempio:
  * <blockquote>
  * &#64;Id <br/>
  * &#64;GenericGenerator(name = "idGenerator",
- * strategy = "it.miriade.commons.model3.entities.utils.StringIdGenerator",
+ * strategy = "it.miriade.commons.model.entities.utils.StringIdGenerator",
  * parameters = {<br/>
  * &#64;Parameter(value = "field_name_id_seq", name = "sequence"),
  * &#64;Parameter(value = "12", name = "length")<br/>
@@ -72,15 +70,17 @@ public class StringIdGenerator implements IdentifierGenerator, Configurable {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				String id = "" + rs.getInt("nextval");
-				key = StringHandler.left(id, length, '0');
+				key = StringUtils.leftPad(id, length, '0');
 			} else {
 				throw new Exception("Ivalid nextval for " + sequence);
 			}
 
 		} catch (Exception e) {
+			if (logger.isDebugEnabled())
+				logger.error(e.getMessage(), e);
+			else
+				logger.error(e.getMessage());
 			key = UUID.randomUUID().toString();
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
 		} finally {
 			logger.warn(String.format("Generated value: %s (sequence: %s)", key, sequence));
 		}

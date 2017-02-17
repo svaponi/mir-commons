@@ -14,14 +14,14 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-import it.miriade.commons.collections.CollectionUtils;
 import it.miriade.commons.model.Model;
-import it.miriade.commons.utils.ExHandler;
-import it.miriade.commons.utils.StringHandler;
 
 /**
  * @See {@link Dao}
@@ -29,9 +29,11 @@ import it.miriade.commons.utils.StringHandler;
  */
 public class DaoImpl implements Dao {
 
+	@Value("${miriade.dao.throwex:false}")
+	protected boolean throwEx = false;
+
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected boolean isTraceEnabled = logger.isTraceEnabled();
-	protected boolean throwEx = false;
 	protected String prefixInfo = "<any>";
 
 	@Autowired
@@ -148,10 +150,7 @@ public class DaoImpl implements Dao {
 			Query query = this.getSession().createSQLQuery(SQL);
 			key = (Long) query.uniqueResult();
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
 			logger.debug("%s retrieve sequence next value %d (sequence: %s)", prefixInfo, key, sequence);
 		}
@@ -164,7 +163,7 @@ public class DaoImpl implements Dao {
 	@Override
 	@Transactional(readOnly = false)
 	public int deleteAll(String entityHqlName) {
-		if (StringHandler.hasText(entityHqlName))
+		if (StringUtils.hasText(entityHqlName))
 			try {
 				String hql = String.format("delete from %s", entityHqlName);
 				Query query = this.getSession().createQuery(hql);
@@ -172,10 +171,7 @@ public class DaoImpl implements Dao {
 				logger.debug("%s delete all entities of type %s, %d deleted", prefixInfo, entityHqlName, result);
 				return result;
 			} catch (ObjectNotFoundException | DataAccessException e) {
-				logger.warn(ExHandler.getRoot(e));
-				logger.debug(ExHandler.getStackTraceButRoot(e));
-				if (throwEx)
-					throw e;
+				handleException(e);
 			}
 		return Model.ERROR_CODE;
 	}
@@ -191,7 +187,7 @@ public class DaoImpl implements Dao {
 		List<Object[]> records = new ArrayList<Object[]>();
 		try {
 			Query query = this.getSession().createQuery(hql);
-			if (CollectionUtils.notEmpty(params))
+			if (!CollectionUtils.isEmpty(params))
 				for (String param : params.keySet())
 					if (params.get(param) instanceof Collection<?>)
 						query.setParameterList(param, (Collection<?>) params.get(param));
@@ -200,12 +196,9 @@ public class DaoImpl implements Dao {
 
 			records = (List<Object[]>) query.list();
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d records (hql-query: %s, params: %s)", prefixInfo, CollectionUtils.size(records), hql, params));
+			logger.debug(String.format("%s retrieve list of %d records (hql-query: %s, params: %s)", prefixInfo, (records == null ? 0 : records.size()), hql, params));
 		}
 		/*
 		 * svaponi - 21 Apr 2015
@@ -222,7 +215,7 @@ public class DaoImpl implements Dao {
 		List<Object> records = new ArrayList<Object>();
 		try {
 			Query query = this.getSession().createQuery(hql);
-			if (CollectionUtils.notEmpty(params))
+			if (!CollectionUtils.isEmpty(params))
 				for (String param : params.keySet())
 					if (params.get(param) instanceof Collection<?>)
 						query.setParameterList(param, (Collection<?>) params.get(param));
@@ -231,12 +224,9 @@ public class DaoImpl implements Dao {
 
 			records = (List<Object>) query.list();
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d records (hql-query: %s, params: %s)", prefixInfo, CollectionUtils.size(records), hql, params));
+			logger.debug(String.format("%s retrieve list of %d records (hql-query: %s, params: %s)", prefixInfo, (records == null ? 0 : records.size()), hql, params));
 		}
 		return records;
 	}
@@ -247,7 +237,7 @@ public class DaoImpl implements Dao {
 		Object[] tuple = new Object[] {};
 		try {
 			Query query = this.getSession().createQuery(hql);
-			if (CollectionUtils.notEmpty(params))
+			if (!CollectionUtils.isEmpty(params))
 				for (String param : params.keySet())
 					if (params.get(param) instanceof Collection<?>)
 						query.setParameterList(param, (Collection<?>) params.get(param));
@@ -255,12 +245,9 @@ public class DaoImpl implements Dao {
 						query.setParameter(param, params.get(param));
 
 			List<Object[]> records = (List<Object[]>) query.list();
-			tuple = CollectionUtils.notEmpty(records) ? (Object[]) records.get(0) : new Object[] {};
+			tuple = !CollectionUtils.isEmpty(records) ? (Object[]) records.get(0) : new Object[] {};
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
 			logger.debug(String.format("%s retrieve single record with %d columns (hql-query: %s, params: %s)", prefixInfo, tuple.length, hql, params));
 		}
@@ -273,7 +260,7 @@ public class DaoImpl implements Dao {
 		Object value = null;
 		try {
 			Query query = this.getSession().createQuery(hql);
-			if (CollectionUtils.notEmpty(params))
+			if (!CollectionUtils.isEmpty(params))
 				for (String param : params.keySet())
 					if (params.get(param) instanceof Collection<?>)
 						query.setParameterList(param, (Collection<?>) params.get(param));
@@ -281,13 +268,10 @@ public class DaoImpl implements Dao {
 						query.setParameter(param, params.get(param));
 
 			List<Object[]> list = (List<Object[]>) query.list();
-			if (CollectionUtils.notEmpty(list))
+			if (!CollectionUtils.isEmpty(list))
 				value = list.get(0);
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
 			logger.debug(String.format("%s retrieve single value (hql-query: %s, params: %s)", prefixInfo, hql, params));
 		}
@@ -315,13 +299,9 @@ public class DaoImpl implements Dao {
 				records = (List<Object[]>) this.hibernateTemplate.findByNamedQueryAndNamedParam(queryName, paramKeys, paramValues);
 			}
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d records (named-query: %s, params: %s)", prefixInfo, CollectionUtils.size(records), queryName,
-					params));
+			logger.debug(String.format("%s retrieve list of %d records (named-query: %s, params: %s)", prefixInfo, (records == null ? 0 : records.size()), queryName, params));
 		}
 		return records;
 	}
@@ -342,13 +322,9 @@ public class DaoImpl implements Dao {
 				records = (List<Object>) this.hibernateTemplate.findByNamedQueryAndNamedParam(queryName, paramKeys, paramValues);
 			}
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
-			logger.debug(String.format("%s retrieve list of %d records (named-query: %s, params: %s)", prefixInfo, CollectionUtils.size(records), queryName,
-					params));
+			logger.debug(String.format("%s retrieve list of %d records (named-query: %s, params: %s)", prefixInfo, (records == null ? 0 : records.size()), queryName, params));
 		}
 		return records;
 	}
@@ -366,12 +342,9 @@ public class DaoImpl implements Dao {
 				Object[] paramValues = params.values().toArray(new Object[] {});
 				records = (List<Object[]>) this.hibernateTemplate.findByNamedQueryAndNamedParam(queryName, paramKeys, paramValues);
 			}
-			tuple = CollectionUtils.notEmpty(records) ? (Object[]) records.get(0) : new Object[] {};
+			tuple = !CollectionUtils.isEmpty(records) ? (Object[]) records.get(0) : new Object[] {};
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
 			logger.debug(String.format("%s retrieve single record with %d columns (named-query: %s, params: %s)", prefixInfo, tuple.length, queryName, params));
 		}
@@ -391,17 +364,34 @@ public class DaoImpl implements Dao {
 				Object[] paramValues = params.values().toArray(new Object[] {});
 				records = (List<Object[]>) this.hibernateTemplate.findByNamedQueryAndNamedParam(queryName, paramKeys, paramValues);
 			}
-			if (CollectionUtils.notEmpty(records))
+			if (!CollectionUtils.isEmpty(records))
 				value = records.get(0);
 		} catch (Exception e) {
-			logger.warn(ExHandler.getRoot(e));
-			logger.debug(ExHandler.getStackTraceButRoot(e));
-			if (throwEx)
-				throw e;
+			handleException(e);
 		} finally {
 			logger.debug(String.format("%s retrieve single value (named-query: %s, params: %s)", prefixInfo, queryName, params));
 		}
 		return value;
+	}
+
+	/*
+	 * Metodi ausiliari
+	 */
+
+	/**
+	 * In caso il flag {@link #throwEx} sia TRUE rilancio la eccezione (solo se è una {@link RuntimeException}).
+	 * Se il log è a DEBUG stampo tutto lo stacktrace altrimenti solo il message della root.
+	 * 
+	 * @param e
+	 * @throws RuntimeException
+	 */
+	public void handleException(Exception e) throws RuntimeException {
+		if (logger.isDebugEnabled())
+			logger.error(e.getMessage(), e);
+		else
+			logger.error(e.getMessage());
+		if (throwEx && e instanceof RuntimeException)
+			throw (RuntimeException) e;
 	}
 
 }

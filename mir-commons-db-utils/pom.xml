@@ -1,31 +1,23 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>mir-commons-db-utils</artifactId>
 	<parent>
 		<groupId>it.miriade.commons</groupId>
 		<artifactId>mir-commons</artifactId>
-		<version>2.1.0</version>
+		<version>3.0.0</version>
 	</parent>
 
-	<name>${project.artifactId}-${project.version}</name>
+	<name>${project.artifactId}</name>
+	<description>Provides easy-to-use features to access DB without JPA integration.</description>
 
 	<properties>
-
-		<springframework.version>4.0.6.RELEASE</springframework.version>
+		<docs.basedir>${project.parent.basedir}/docs/${project.artifactId}/</docs.basedir>
 		<hibernate.version>4.3.5.Final</hibernate.version>
-
-		<!-- Postgres (usato nei test) -->
+		<!-- Postgres (used for integration-tests) -->
 		<postgresql.version>9.4-1201-jdbc41</postgresql.version>
-
-		<!-- Oracle JDK 1.6 -->
+		<!-- Oracle JDK 1.6 (used for integration-tests) -->
 		<oracle.artifact>ojdbc6</oracle.artifact>
 		<oracle.version>11.2.0.3</oracle.version>
-
-		<!-- Oracle JDK 1.7 (jar non trovato) -->
-		<!-- <oracle.artifact>ojdbc7</oracle.artifact> -->
-		<!-- <oracle.version>12.1.0.2</oracle.version> -->
-
 	</properties>
 
 	<repositories>
@@ -37,16 +29,6 @@
 	</repositories>
 
 	<dependencies>
-
-		<!-- ===================================================================================================== -->
-		<!-- MIR COMMONS -->
-		<!-- ===================================================================================================== -->
-
-		<dependency>
-			<groupId>it.miriade.commons</groupId>
-			<artifactId>mir-commons-base-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
 		<!-- Spring -->
 
@@ -72,10 +54,22 @@
 			<version>${springframework.version}</version>
 		</dependency>
 
-		<!-- ================================================================ -->
-		<!-- TEST dependencies -->
-		<!-- ================================================================ -->
+		<!-- Other dependencies -->
 
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
+		</dependency>
+
+		<!-- Test -->
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${springframework.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- Postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -88,12 +82,6 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>${oracle.artifact}</artifactId>
 			<version>${oracle.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${springframework.version}</version>
 			<scope>test</scope>
 		</dependency>
 

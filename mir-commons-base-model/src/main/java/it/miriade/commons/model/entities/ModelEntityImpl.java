@@ -2,7 +2,8 @@ package it.miriade.commons.model.entities;
 
 import java.io.Serializable;
 
-import it.miriade.commons.utils.StringHandler;
+import org.apache.commons.lang3.builder.RecursiveToStringStyle;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * Interfaccia base per tutte le entities della nostra gerarchia. In realtà l'unico vero scopo pratico di questa
@@ -44,7 +45,7 @@ public class ModelEntityImpl<PK extends Serializable> implements ModelEntity<PK>
 
 	@Override
 	public String toString() {
-		return StringHandler.pojoToString(this);
+		return new ReflectionToStringBuilder(this, new RecursiveToStringStyle()).toString();
 	}
 
 }

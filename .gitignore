@@ -17,10 +17,18 @@ target/
 .settings/
 .project
 .classpath
+.springBeans
 
 # Backups
-**/*.bak
-
+*.bak
 
 # Javadocs
-docs/
+# *.html
+# docs/
+
+# File locali
+TODO
+TODOS
+TODOs
+todo
+todos

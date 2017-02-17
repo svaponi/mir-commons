@@ -1,15 +1,15 @@
 package it.miriade.commons.dbutils.entities;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import it.miriade.commons.utils.DateHandler;
-import it.miriade.commons.utils.DateHandler.Format;
-import it.miriade.commons.utils.StringHandler;
+import java.util.Objects;
 
 public class Test01 implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private static final SimpleDateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+
 	private Date C0 = new Date();
 	private String C1 = "foo";
 	private int C2 = 1;
@@ -18,8 +18,7 @@ public class Test01 implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("{\n  class: %s,\n  properties: {\n    C0: '%s',\n    C1: '%s',\n    C2: %s,\n    C3: %s,\n    C4: %s\n  }\n}",
-				Test01.class.getName(), DateHandler.formatDate(C0, Format.ISO_DATE), StringHandler.toString(C1), C2, C3, C4);
+		return String.format("{\n  class: %s,\n  properties: {\n    C0: '%s',\n    C1: '%s',\n    C2: %s,\n    C3: %s,\n    C4: %s\n  }\n}", Test01.class.getName(), isoDate.format(C0), Objects.toString(C1, ""), C2, C3, C4);
 	}
 
 	@Override
@@ -29,8 +28,7 @@ public class Test01 implements Serializable {
 		if (!(obj instanceof Test01))
 			return false;
 		Test01 foo = (Test01) obj;
-		return StringHandler.toString(C1).equals(foo.C1) && Integer.compare(C2, foo.C2) == 0 && Long.compare(C3, foo.C3) == 0
-				&& Double.compare(C4, foo.C4) == 0;
+		return Objects.toString(C1, "").equals(foo.C1) && Integer.compare(C2, foo.C2) == 0 && Long.compare(C3, foo.C3) == 0 && Double.compare(C4, foo.C4) == 0;
 	}
 
 	public Date getC0() {
